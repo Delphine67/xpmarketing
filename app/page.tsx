@@ -201,7 +201,8 @@ export default function HomePage() {
                 <Image
                   src="/hero-xpmarketing.jpg"
                   alt="Marketing externalisé pour PME"
-                  fill
+                  fill sizes="100vw"
+  priority
                   className="object-cover opacity-90 mix-blend-multiply"
                 />
                 <div className="absolute inset-0 bg-black/15" />
