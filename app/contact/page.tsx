@@ -13,15 +13,16 @@ export default function ContactPage() {
   const calendarUrl = "https://calendly.com/dravet78/30min";
   const telephone = "07 70 28 64 69";
 
+  const chipStyle = "border px-3 py-1.5 rounded-full text-sm cursor-pointer transition";
+  const inputStyle = "mt-2 w-full rounded-xl border border-gray-300 px-4 py-3 bg-white focus:border-black outline-none";
+
   return (
     <main className="min-h-screen bg-white">
 
       {/* HERO */}
       <section className="px-6 py-12" style={{ background: BRAND.grayBg }}>
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-4xl font-bold">
-            Parlons de votre situation
-          </h1>
+          <h1 className="text-4xl font-bold">Parlons de votre situation</h1>
           <p className="mt-4 max-w-2xl text-gray-600">
             Vous avez besoin d'un regard extérieur, d'un appui ponctuel ou d'un marketing externalisé ? Décrivez votre besoin et je reviens vers vous rapidement.
           </p>
@@ -39,21 +40,81 @@ export default function ContactPage() {
 
               <input type="hidden" name="_subject" value="Contact XPMarketing" />
 
+              {/* INPUTS */}
               <div className="grid md:grid-cols-2 gap-6">
-                <input name="nom" required placeholder="Nom *" className="input" />
-                <input name="entreprise" required placeholder="Entreprise *" className="input" />
-                <input name="email" type="email" required placeholder="Email *" className="input md:col-span-2" />
-                <input name="telephone" placeholder="Téléphone" className="input md:col-span-2" />
+                <div>
+                  <label>Nom *</label>
+                  <input name="nom" required className={inputStyle} />
+                </div>
+
+                <div>
+                  <label>Entreprise *</label>
+                  <input name="entreprise" required className={inputStyle} />
+                </div>
+
+                <div className="md:col-span-2">
+                  <label>Email *</label>
+                  <input name="email" type="email" required className={inputStyle} />
+                </div>
+
+                <div className="md:col-span-2">
+                  <label>Téléphone</label>
+                  <input name="telephone" className={inputStyle} />
+                </div>
               </div>
 
-              <textarea name="message" required placeholder="Votre message"
-                className="mt-6 w-full min-h-[150px] input" />
+              {/* BESOIN */}
+              <div className="mt-8">
+                <label>Votre besoin</label>
+                <div className="flex flex-wrap gap-2 mt-3">
+                  {[
+                    "Faire le point",
+                    "Diagnostic",
+                    "Mission ponctuelle",
+                    "Mission projet",
+                    "Marketing externalisé",
+                  ].map((item) => (
+                    <label key={item}>
+                      <input type="checkbox" name="besoin[]" value={item} className="hidden peer" />
+                      <span className={`${chipStyle} peer-checked:bg-orange-500 peer-checked:text-white`}>
+                        {item}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* FORMAT */}
+              <div className="mt-8">
+                <label>Format souhaité</label>
+                <div className="flex flex-wrap gap-2 mt-3">
+                  {[
+                    "Mission ponctuelle",
+                    "Mission projet",
+                    "Accompagnement récurrent",
+                  ].map((item) => (
+                    <label key={item}>
+                      <input type="radio" name="format" value={item} className="hidden peer" />
+                      <span className={`${chipStyle} peer-checked:bg-orange-500 peer-checked:text-white`}>
+                        {item}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* MESSAGE */}
+              <div className="mt-8">
+                <label>Message *</label>
+                <textarea name="message" required className={`${inputStyle} min-h-[150px]`} />
+              </div>
 
               <button type="submit"
                 className="mt-6 px-6 py-3 rounded-xl text-white font-semibold"
                 style={{ background: BRAND.orange }}>
                 Envoyer la demande →
               </button>
+
             </form>
           </div>
 
