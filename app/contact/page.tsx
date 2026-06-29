@@ -9,9 +9,9 @@ const BRAND = {
 };
 
 export default function ContactPage() {
-  const formAction = "https://formspree.io/f/xlgonobp";
+  const formAction = "https://contactformsdelphinevkvyxxck-contact-xpmarketing.functions.fnc.fr-par.scw.cloud";
   const mailTo = "delphine@xpmarketing.fr";
-  const calendarUrl = "https://calendly.com/dravet78/30min";
+  const calendarUrl = "https://cal.eu/delphineravet/premier-echange";
   const telephone = "07 70 28 64 69";
 
   const [isSubmitting, setIsSubmitting] = useState(false);
