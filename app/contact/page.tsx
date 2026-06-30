@@ -9,7 +9,8 @@ const BRAND = {
 };
 
 export default function ContactPage() {
-  const formAction = "https://contactformsdelphinevkvyxxck-contact-xpmarketing.functions.fnc.fr-par.scw.cloud";
+  const formAction =
+    "https://contactformsdelphinevkvyxxck-contact-xpmarketing.functions.fnc.fr-par.scw.cloud";
   const mailTo = "delphine@xpmarketing.fr";
   const calendarUrl = "https://cal.eu/delphineravet/premier-echange";
   const telephone = "07 70 28 64 69";
@@ -22,7 +23,7 @@ export default function ContactPage() {
   const inputStyle =
     "mt-2 w-full rounded-xl border border-gray-300 px-4 py-3 bg-white focus:border-black outline-none";
 
-  async function handleSubmit(e: any) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setIsSubmitting(true);
     setErrorMessage("");
@@ -30,13 +31,39 @@ export default function ContactPage() {
     const form = e.currentTarget;
     const formData = new FormData(form);
 
+    const gotcha = formData.get("_gotcha");
+    if (gotcha) {
+      setIsSubmitting(false);
+      return;
+    }
+
+    const payload = {
+      source_site: "xpmarketing.fr",
+      activite: "Parent",
+      nom: String(formData.get("nom") || ""),
+      entreprise: String(formData.get("entreprise") || ""),
+      ville: String(formData.get("ville") || ""),
+      code_postal: String(formData.get("code_postal") || ""),
+      taille: String(formData.get("taille") || ""),
+      secteur: String(formData.get("secteur") || ""),
+      telephone: String(formData.get("telephone") || ""),
+      email: String(formData.get("email") || ""),
+      besoin: formData.getAll("besoin[]"),
+      format: String(formData.get("format") || ""),
+      message: String(formData.get("message") || ""),
+      urgence: String(formData.get("urgence") || ""),
+      budget: String(formData.get("budget") || ""),
+      submitted_at: new Date().toISOString(),
+    };
+
     try {
       const response = await fetch(formAction, {
         method: "POST",
-        body: formData,
         headers: {
+          "Content-Type": "application/json",
           Accept: "application/json",
         },
+        body: JSON.stringify(payload),
       });
 
       if (response.ok) {
@@ -45,8 +72,11 @@ export default function ContactPage() {
         return;
       }
 
-      setErrorMessage("L’envoi a échoué. Merci de réessayer.");
-    } catch {
+      const errorText = await response.text();
+      console.error("Erreur lors de l'envoi :", errorText);
+      setErrorMessage("L'envoi a échoué. Merci de réessayer.");
+    } catch (error) {
+      console.error("Erreur réseau :", error);
       setErrorMessage("Une erreur est survenue. Merci de réessayer.");
     } finally {
       setIsSubmitting(false);
@@ -60,9 +90,9 @@ export default function ContactPage() {
         <div className="max-w-7xl mx-auto">
           <h1 className="text-4xl font-bold">Parlons de votre situation</h1>
           <p className="mt-4 max-w-2xl text-gray-600">
-            Vous avez besoin d’un regard extérieur, d’un appui ponctuel ou d’un
-            marketing externalisé ? Décrivez votre besoin et je reviens vers vous
-            rapidement.
+            Vous avez besoin d'un regard extérieur, d'un appui ponctuel ou
+            d'un marketing externalisé ? Décrivez votre besoin et je reviens
+            vers vous rapidement.
           </p>
         </div>
       </section>
@@ -90,17 +120,15 @@ export default function ContactPage() {
                     placeholder="Votre nom"
                   />
                 </div>
-
                 <div>
                   <label>Entreprise *</label>
                   <input
                     name="entreprise"
                     required
                     className={inputStyle}
-                    placeholder="Nom de l’entreprise"
+                    placeholder="Nom de l'entreprise"
                   />
                 </div>
-
                 <div>
                   <label>Ville *</label>
                   <input
@@ -110,7 +138,6 @@ export default function ContactPage() {
                     placeholder="Ex : Nanterre"
                   />
                 </div>
-
                 <div>
                   <label>Code postal *</label>
                   <input
@@ -120,9 +147,8 @@ export default function ContactPage() {
                     placeholder="Ex : 92000"
                   />
                 </div>
-
                 <div>
-                  <label>Taille de l’entreprise *</label>
+                  <label>Taille de l'entreprise *</label>
                   <select
                     name="taille"
                     required
@@ -138,9 +164,8 @@ export default function ContactPage() {
                     <option value="250+">Plus de 250 salariés</option>
                   </select>
                 </div>
-
                 <div>
-                  <label>Secteur d’activité *</label>
+                  <label>Secteur d'activité *</label>
                   <select
                     name="secteur"
                     required
@@ -153,7 +178,9 @@ export default function ContactPage() {
                     <option value="Industrie">Industrie</option>
                     <option value="BTP">BTP</option>
                     <option value="Immobilier">Immobilier</option>
-                    <option value="Gestion immobilière">Gestion immobilière</option>
+                    <option value="Gestion immobilière">
+                      Gestion immobilière
+                    </option>
                     <option value="Services">Services</option>
                     <option value="Commerce">Commerce</option>
                     <option value="Transport">Transport</option>
@@ -168,7 +195,6 @@ export default function ContactPage() {
                     <option value="Autre">Autre</option>
                   </select>
                 </div>
-
                 <div>
                   <label>Téléphone</label>
                   <input
@@ -177,7 +203,6 @@ export default function ContactPage() {
                     placeholder="06..."
                   />
                 </div>
-
                 <div className="md:col-span-2">
                   <label>Email *</label>
                   <input
@@ -250,6 +275,64 @@ export default function ContactPage() {
                 </div>
               </div>
 
+              {/* URGENCE */}
+              <div className="mt-8">
+                <label className="text-sm font-medium">
+                  Niveau d'urgence *
+                </label>
+                <div className="mt-3 flex flex-col gap-2">
+                  {[
+                    "1 semaine maximum",
+                    "2 semaines maximum",
+                    "1 mois maximum",
+                    "Pas d'urgence particulière",
+                  ].map((item) => (
+                    <label
+                      key={item}
+                      className="flex items-center gap-2 cursor-pointer"
+                    >
+                      <input
+                        type="radio"
+                        name="urgence"
+                        value={item}
+                        className="accent-orange-500"
+                        required
+                      />
+                      <span className="text-sm text-gray-600">{item}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* BUDGET */}
+              <div className="mt-8">
+                <label className="text-sm font-medium">
+                  Budget estimé *
+                </label>
+                <div className="mt-3 flex flex-col gap-2">
+                  {[
+                    "< 1 000€",
+                    "Entre 1 000€ et 2 000€",
+                    "Entre 2 000€ et 3 000€",
+                    "> 3 000€",
+                  ].map((item) => (
+                    <label
+                      key={item}
+                      className="flex items-center gap-2 cursor-pointer"
+                    >
+                      <input
+                        type="radio"
+                        name="budget"
+                        value={item}
+                        className="accent-orange-500"
+                        required
+                      />
+                      <span className="text-sm text-gray-600">{item}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
               {/* MESSAGE */}
               <div className="mt-8">
                 <label>Message *</label>
@@ -270,9 +353,8 @@ export default function ContactPage() {
                 >
                   {isSubmitting ? "Envoi en cours..." : "Envoyer la demande →"}
                 </button>
-
                 <p className="text-xs text-slate-500">
-                  Votre demande me sera transmise directement par email.
+                  Votre demande sera transmise et qualifiée automatiquement.
                 </p>
               </div>
 
@@ -285,12 +367,11 @@ export default function ContactPage() {
           {/* SIDEBAR */}
           <aside className="space-y-6">
             <div className="p-6 border rounded-xl">
-              <h3 className="font-semibold mb-2">Zone d’intervention</h3>
+              <h3 className="font-semibold mb-2">Zone d'intervention</h3>
               <p>Île-de-France</p>
               <p className="mt-3">{mailTo}</p>
               <p>{telephone}</p>
             </div>
-
             <div className="p-6 border rounded-xl">
               <h3 className="font-semibold mb-2">Premier échange</h3>
               <ul className="text-sm space-y-1">
@@ -298,7 +379,6 @@ export default function ContactPage() {
                 <li>✓ Recommandations concrètes</li>
                 <li>✓ Orientation claire</li>
               </ul>
-
               <a
                 href={calendarUrl}
                 target="_blank"
@@ -308,7 +388,6 @@ export default function ContactPage() {
               >
                 Prendre rendez-vous
               </a>
-
               <a
                 href={`mailto:${mailTo}`}
                 className="mt-3 block text-center px-4 py-3 border rounded-xl"
